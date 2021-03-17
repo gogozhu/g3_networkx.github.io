@@ -112,7 +112,7 @@ const graph = new G6.Graph({
     default: ['drag-canvas', 'activate-relations'],
   },
   defaultNode: {
-    size: [10, 10],
+    size: 20,
     /* style for the keyShape */
     // style: {
     //   lineWidth: 2,
@@ -125,7 +125,7 @@ const graph = new G6.Graph({
     style: {
       stroke: '#aaa',
       lineAppendWidth: 2,
-      opacity: 0.3,
+//       opacity: 0.3,
     },
   },
   /* styles for different states, there are built-in styles for states: active, inactive, selected, highlight, disable */
@@ -167,11 +167,11 @@ var data = JSON.parse(decodeURIComponent(getQueryVariable("parm")));
 
 G6.Util.processParallelEdges(data.edges);
 data.edges.forEach((edge) => {
-  edge.style = {
-    endArrow: {
+  edge.style.endArrow = {
       path: G6.Arrow.triangle()
-    }
-  }
+    };
+  edge.style.stroke = '#F6BD16';
+  edge.style.endArrow.fill = '#F6BD16';
 });
 
 graph.data(data);
