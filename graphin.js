@@ -169,8 +169,8 @@ G6.Util.processParallelEdges(data.edges);
 data.edges.forEach((edge) => {
   edge.style = {
     endArrow: {
-      path: G6.Arrow.triangle(),
-    };
+      path: G6.Arrow.triangle()
+    }
 });
 
 graph.data(data);
