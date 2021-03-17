@@ -171,6 +171,7 @@ data.edges.forEach((edge) => {
     endArrow: {
       path: G6.Arrow.triangle()
     }
+  }
 });
 
 graph.data(data);
