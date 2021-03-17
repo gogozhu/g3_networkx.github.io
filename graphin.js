@@ -1,3 +1,96 @@
+import G6 from '@antv/g6';
+import insertCss from 'insert-css';
+
+// 我们用 insert-css 演示引入自定义样式
+// 推荐将样式添加到自己的样式文件中
+// 若拷贝官方代码，别忘了 npm install insert-css
+insertCss(`
+  .g6-component-tooltip {
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 0px 10px 24px 10px;
+    box-shadow: rgb(174, 174, 174) 0px 0px 10px;
+  }
+`);
+
+const data = {
+  nodes: [
+    {
+      id: '0',
+      label: 'node-0',
+      x: 100,
+      y: 100,
+      description: 'This is node-0.',
+      subdescription: 'This is subdescription of node-0.',
+    },
+    {
+      id: '1',
+      label: 'node-1',
+      x: 250,
+      y: 100,
+      description: 'This is node-1.',
+      subdescription: 'This is subdescription of node-1.',
+    },
+    {
+      id: '2',
+      label: 'node-2',
+      x: 150,
+      y: 310,
+      description: 'This is node-2.',
+      subdescription: 'This is subdescription of node-2.',
+    },
+    {
+      id: '3',
+      label: 'node-3',
+      x: 320,
+      y: 310,
+      description: 'This is node-3.',
+      subdescription: 'This is subdescription of node-3.',
+    },
+  ],
+  edges: [
+    {
+      id: 'e0',
+      source: '0',
+      target: '1',
+      description: 'This is edge from node 0 to node 1.',
+    },
+    {
+      id: 'e1',
+      source: '0',
+      target: '2',
+      description: 'This is edge from node 0 to node 2.',
+    },
+    {
+      id: 'e2',
+      source: '0',
+      target: '3',
+      description: 'This is edge from node 0 to node 3.',
+    },
+  ],
+};
+const tooltip = new G6.Tooltip({
+  offsetX: 10,
+  offsetY: 10,
+  // the types of items that allow the tooltip show up
+  // 允许出现 tooltip 的 item 类型
+  itemTypes: ['node', 'edge'],
+  // custom the tooltip's content
+  // 自定义 tooltip 内容
+  getContent: (e) => {
+    const outDiv = document.createElement('div');
+    outDiv.style.width = 'fit-content';
+    //outDiv.style.padding = '0px 0px 20px 0px';
+    outDiv.innerHTML = `
+      <h4>Custom Content</h4>
+      <ul>
+        <li>Type: ${e.item.getType()}</li>
+      </ul>
+      <ul>
+        <li>Label: ${e.item.getModel().label || e.item.getModel().id}</li>
+      </ul>`;
+    return outDiv;
+  },
+});
 
 const container = document.getElementById('container');
 const width = container.scrollWidth;
@@ -6,95 +99,36 @@ const graph = new G6.Graph({
   container: 'container',
   width,
   height,
-  layout: {
-    type: 'force',
-    preventOverlap: true,
-    linkDistance: (d) => {
-      if (d.source.id === 'node0') {
-        return 100;
-      }
-      return 30;
-    },
-    nodeStrength: (d) => {
-      if (d.isLeaf) {
-        return -50;
-      }
-      return -10;
-    },
-    edgeStrength: (d) => {
-      if (d.source.id === 'node1' || d.source.id === 'node2' || d.source.id === 'node3') {
-        return 0.7;
-      }
-      return 0.1;
-    },
+  linkCenter: true,
+  plugins: [tooltip],
+  modes: {
+    default: ['drag-node'],
   },
   defaultNode: {
-    color: '#5B8FF9',
+    size: [80, 40],
+    type: 'rect',
   },
-  modes: {
-    default: ['drag-canvas'],
+  defaultEdge: {
+    style: {
+      stroke: '#b5b5b5',
+      lineAppendWidth: 3,
+    },
   },
 });
-
-const data = {
-  nodes: [
-    { id: 'node0', size: 50 },
-    { id: 'node1', size: 30 },
-    { id: 'node2', size: 30 },
-    { id: 'node3', size: 30 },
-    { id: 'node4', size: 30, isLeaf: true },
-    { id: 'node5', size: 30, isLeaf: true },
-    { id: 'node6', size: 15, isLeaf: true },
-    { id: 'node7', size: 15, isLeaf: true },
-    { id: 'node8', size: 15, isLeaf: true },
-    { id: 'node9', size: 15, isLeaf: true },
-    { id: 'node10', size: 15, isLeaf: true },
-    { id: 'node11', size: 15, isLeaf: true },
-    { id: 'node12', size: 15, isLeaf: true },
-    { id: 'node13', size: 15, isLeaf: true },
-    { id: 'node14', size: 15, isLeaf: true },
-    { id: 'node15', size: 15, isLeaf: true },
-    { id: 'node16', size: 15, isLeaf: true },
-  ],
-  edges: [
-    { source: 'node0', target: 'node1' },
-    { source: 'node0', target: 'node2' },
-    { source: 'node0', target: 'node3' },
-    { source: 'node0', target: 'node4' },
-    { source: 'node0', target: 'node5' },
-    { source: 'node1', target: 'node6' },
-    { source: 'node1', target: 'node7' },
-    { source: 'node2', target: 'node8' },
-    { source: 'node2', target: 'node9' },
-    { source: 'node2', target: 'node10' },
-    { source: 'node2', target: 'node11' },
-    { source: 'node2', target: 'node12' },
-    { source: 'node2', target: 'node13' },
-    { source: 'node3', target: 'node14' },
-    { source: 'node3', target: 'node15' },
-    { source: 'node3', target: 'node16' },
-  ],
-};
-const nodes = data.nodes;
-graph.data({
-  nodes,
-  edges: data.edges.map(function (edge, i) {
-    edge.id = 'edge' + i;
-    return Object.assign({}, edge);
-  }),
-});
+graph.data(data);
 graph.render();
 
-graph.on('node:dragstart', function (e) {
-  graph.layout();
-  refreshDragedNodePosition(e);
+graph.on('node:mouseenter', (e) => {
+  graph.setItemState(e.item, 'active', true);
 });
-graph.on('node:drag', function (e) {
-  refreshDragedNodePosition(e);
+graph.on('node:mouseleave', (e) => {
+  graph.setItemState(e.item, 'active', false);
 });
-graph.on('node:dragend', function (e) {
-  e.item.get('model').fx = null;
-  e.item.get('model').fy = null;
+graph.on('edge:mouseenter', (e) => {
+  graph.setItemState(e.item, 'active', true);
+});
+graph.on('edge:mouseleave', (e) => {
+  graph.setItemState(e.item, 'active', false);
 });
 
 if (typeof window !== 'undefined')
@@ -103,9 +137,3 @@ if (typeof window !== 'undefined')
     if (!container || !container.scrollWidth || !container.scrollHeight) return;
     graph.changeSize(container.scrollWidth, container.scrollHeight);
   };
-
-function refreshDragedNodePosition(e) {
-  const model = e.item.get('model');
-  model.fx = e.x;
-  model.fy = e.y;
-}
