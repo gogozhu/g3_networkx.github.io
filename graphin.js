@@ -105,7 +105,8 @@ const graph = new G6.Graph({
   height,
   layout: {
     type: 'force',
-    edgeStrength: 0.7,
+    preventOverlap: true,
+    edgeStrength: 0.4,
   },
   plugins: [tooltip],
   modes: {
@@ -163,7 +164,7 @@ function getQueryVariable(variable)
 }
 
 // var data = {"directed": false, "multigraph": false, "graph": {}, "nodes": [{"name": 0, "id": 0}, {"name": 1, "id": 1}, {"name": 2, "id": 2}, {"name": 3, "id": 3}, {"name": 4, "id": 4}, {"name": 5, "id": 5}, {"name": 6, "id": 6}, {"name": 7, "id": 7}, {"name": 8, "id": 8}, {"name": 9, "id": 9}, {"name": 10, "id": 10}, {"name": 11, "id": 11}, {"name": 12, "id": 12}, {"name": 13, "id": 13}, {"name": 14, "id": 14}], "links": [{"source": 0, "target": 1}, {"source": 0, "target": 2}, {"source": 0, "target": 3}, {"source": 0, "target": 4}, {"source": 0, "target": 5}, {"source": 1, "target": 2}, {"source": 1, "target": 3}, {"source": 1, "target": 4}, {"source": 1, "target": 5}, {"source": 2, "target": 3}, {"source": 2, "target": 4}, {"source": 2, "target": 5}, {"source": 3, "target": 4}, {"source": 3, "target": 5}, {"source": 4, "target": 5}, {"source": 5, "target": 6}, {"source": 6, "target": 7}, {"source": 7, "target": 8}, {"source": 8, "target": 9}, {"source": 9, "target": 10}, {"source": 9, "target": 11}, {"source": 9, "target": 12}, {"source": 9, "target": 13}, {"source": 9, "target": 14}, {"source": 10, "target": 11}, {"source": 10, "target": 12}, {"source": 10, "target": 13}, {"source": 10, "target": 14}, {"source": 11, "target": 12}, {"source": 11, "target": 13}, {"source": 11, "target": 14}, {"source": 12, "target": 13}, {"source": 12, "target": 14}, {"source": 13, "target": 14}]};
-var data = JSON.parse(decodeURIComponent(getQueryVariable("parm")));
+// var data = JSON.parse(decodeURIComponent(getQueryVariable("parm")));
 
 G6.Util.processParallelEdges(data.edges);
 data.edges.forEach((edge) => {
@@ -177,6 +178,20 @@ data.edges.forEach((edge) => {
 graph.data(data);
 graph.render();
 
+
+graph.on('node:dragstart', function (e) {
+  graph.layout();
+  refreshDragedNodePosition(e);
+});
+graph.on('node:drag', function (e) {
+  refreshDragedNodePosition(e);
+});
+graph.on('node:dragend', function (e) {
+  e.item.get('model').fx = null;
+  e.item.get('model').fy = null;
+});
+
+
 if (typeof window !== 'undefined')
   window.onresize = () => {
     if (!graph || graph.get('destroyed')) return;
@@ -191,3 +206,9 @@ if (typeof window !== 'undefined')
     if (!container || !container.scrollWidth || !container.scrollHeight) return;
     graph.changeSize(container.scrollWidth, container.scrollHeight);
   };
+
+function refreshDragedNodePosition(e) {
+  const model = e.item.get('model');
+  model.fx = e.x;
+  model.fy = e.y;
+}
