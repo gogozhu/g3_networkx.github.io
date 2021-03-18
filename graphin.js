@@ -90,7 +90,7 @@ const tooltip = new G6.Tooltip({
     } else {
       const source = e.item.getSource();
       const target = e.item.getTarget();
-      outDiv.innerHTML = `来源：${source.getModel().properties.user_id}<br/>去向：${target.getModel().properties.user_id}`;
+      outDiv.innerHTML = `来源：${source.getModel().properties.user_id}<br/>去向：${target.getModel().properties.user_id}<br/>类型：${model.properties.type}`;
     }
     return outDiv;
   },
