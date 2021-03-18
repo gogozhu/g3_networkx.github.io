@@ -86,11 +86,11 @@ const tooltip = new G6.Tooltip({
     outDiv.style.height = 'fit-content';
     const model = e.item.getModel();
     if (e.item.getType() === 'node') {
-      outDiv.innerHTML = `${model.name}<br/>${model.keyNo}`;
+      outDiv.innerHTML = `${model.properties.user_id}<br/>${model.properties.member_id}`;
     } else {
       const source = e.item.getSource();
       const target = e.item.getTarget();
-      outDiv.innerHTML = `来源：${source.getModel().name}<br/>去向：${target.getModel().name}`;
+      outDiv.innerHTML = `来源：${source.getModel().properties.user_id}<br/>去向：${target.getModel().properties.user_id}`;
     }
     return outDiv;
   },
